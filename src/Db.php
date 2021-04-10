@@ -48,11 +48,12 @@ class Db
      *
      * @param string  $table
      * @param integer $id
+     * @param string $idName
      * @return array
      */
-    public function pobierz(string $table, int $id): ?array
+    public function pobierz(string $sql, int $id, string $idName): ?array
     {
-        $sql = "SELECT * FROM $table WHERE id = :id";
+        $sql = $sql . " AND $idName = :id";
         $stmt = $this->pdo->prepare($sql);
 
         return $stmt->execute([':id' => $id]) ? $stmt->fetch(\PDO::FETCH_ASSOC) : null;

@@ -1,8 +1,7 @@
-<?php
+    <?php
 include 'header.php';
 
 use Ibd\Ksiazki;
-
 $ksiazki = new Ksiazki();
 $lista = $ksiazki->pobierzWszystkie();
 ?>
@@ -14,7 +13,8 @@ $lista = $ksiazki->pobierzWszystkie();
 		<tr>
 			<th>&nbsp;</th>
 			<th>Tytuł</th>
-			<th>Autor</th>
+			<th>Autor imie</th>
+            <th>Autor nazwisko</th>
 			<th>Kategoria</th>
 			<th>Cena PLN</th>
 			<th>&nbsp;</th>
@@ -31,8 +31,9 @@ $lista = $ksiazki->pobierzWszystkie();
 					<?php endif; ?>
 				</td>
 				<td><?= $ks['tytul'] ?></td>
-				<td><?= $ks['id_autora'] ?></td>
-				<td><?= $ks['id_kategorii'] ?></td>
+				<td><?= $ks['imie'] ?></td>
+                <td><?= $ks['nazwisko'] ?></td>
+                <td><?= $ks['nazwa'] ?></td>
 				<td><?= $ks['cena'] ?></td>
 				<td>
 					<a href="#" title="dodaj do koszyka"><i class="fas fa-cart-plus"></i></a>
