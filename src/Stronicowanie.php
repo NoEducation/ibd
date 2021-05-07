@@ -26,6 +26,12 @@ class Stronicowanie
     private $strona = 0;
 
     /**
+     * Ilosc stron.
+     *
+     * @var int
+     */
+    private $iloscRekordow = 0;
+    /**
      * Dodatkowe parametry przekazywane w pasku adresu (metodą GET).
      *
      * @var array
@@ -38,6 +44,7 @@ class Stronicowanie
      * @var array
      */
     private $parametryZapytania;
+
 
     public function __construct($parametryGet, $parametryZapytania)
     {
@@ -71,11 +78,31 @@ class Stronicowanie
     public function pobierzLinki(string $select, string $plik): string
     {
         $rekordow = $this->db->policzRekordy($select, $this->parametryZapytania);
+        $this->iloscRekordow =  $rekordow;
         $liczbaStron = ceil($rekordow / $this->naStronie);
         $parametry = $this->_przetworzParametry();
 
         $linki = "<nav><ul class='pagination'>";
         for ($i = 0; $i < $liczbaStron; $i++) {
+
+            if($i == 0 && $this->strona != 0){
+                $linki .= sprintf(
+                    "<li class='page-item'><a href='%s?%s&strona=%d' class='page-link'>%s</a></li>",
+                    $plik,
+                    $parametry,
+                    0,
+                   'Początek');
+            }
+
+            if($i == 0 && $this->strona != 0){
+                $linki .= sprintf(
+                    "<li class='page-item'><a href='%s?%s&strona=%d' class='page-link'>%s</a></li>",
+                    $plik,
+                    $parametry,
+                    $this->strona - 1,
+                    'Poprzednia');
+            }
+
             if ($i == $this->strona) {
                 $linki .= sprintf("<li class='page-item active'><a class='page-link'>%d</a></li>", $i + 1);
             } else {
@@ -87,10 +114,41 @@ class Stronicowanie
                     $i + 1
                 );
             }
+
+            if($i == $liczbaStron - 1 && $this->strona != $liczbaStron - 1){
+                $linki .= sprintf(
+                    "<li class='page-item'><a href='%s?%s&strona=%d' class='page-link'>%s</a></li>",
+                    $plik,
+                    $parametry,
+                    $this->strona + 1,
+                    'Następna');
+            }
+
+            if($i == $liczbaStron - 1 && $this->strona != $liczbaStron - 1){
+                $linki .= sprintf(
+                    "<li class='page-item'><a href='%s?%s&strona=%d' class='page-link'>%s</a></li>",
+                    $plik,
+                    $parametry,
+                    $liczbaStron - 1,
+                    'Koniec');
+            }
         }
         $linki .= "</ul></nav>";
 
         return $linki;
+    }
+
+    public function getStrona(){
+
+        return $this -> strona;
+    }
+
+    public function getnaStronie(){
+        return $this -> naStronie;
+    }
+
+    public function getIloscRekordow(){
+        return $this->iloscRekordow;
     }
 
     /**

@@ -17,33 +17,6 @@ class Ksiazki
     }
 
     /**
-     * Pobiera wszystkie książki.
-     *
-     * @return array
-     */
-    public function pobierzWszystkie(): ?array
-    {
-		$sql = "SELECT 
-                k.id ,
-                k.id_autora,
-                k.id_kategorii,
-                k.tytul,
-                k.zdjecie,
-                k.opis,
-                k.cena,
-                k.liczba_stron,
-                k.isbn,
-                a.imie,
-                a.nazwisko,
-                kk.nazwa
-                FROM ksiazki k 
-                INNER JOIN autorzy a on k.id_autora = a.id
-                INNER JOIN kategorie kk on kk.id = k.id_kategorii";
-        $result = $this->db->pobierzWszystko($sql);
-		return $result;
-	}
-
-    /**
      * Pobiera dane książki o podanym id.
      *
      * @param int $id
@@ -100,11 +73,29 @@ class Ksiazki
     public function pobierzZapytanie(array $params = []): array
     {
         $parametry = [];
-        $sql = "SELECT k.* FROM ksiazki k WHERE 1=1 ";
+        $sql = "SELECT 
+                k.id ,
+                k.id_autora,
+                k.id_kategorii,
+                k.tytul,
+                k.zdjecie,
+                k.opis,
+                k.cena,
+                k.liczba_stron,
+                k.isbn,
+                a.imie,
+                a.nazwisko,
+                kk.nazwa
+                FROM ksiazki k 
+                INNER JOIN autorzy a on k.id_autora = a.id
+                INNER JOIN kategorie kk on kk.id = k.id_kategorii WHERE 1=1 ";
 
         // dodawanie warunków do zapytanie
         if (!empty($params['fraza'])) {
-            $sql .= "AND k.tytul LIKE :fraza ";
+            $sql .= "AND (k.tytul LIKE :fraza 
+                OR k.opis LIKE :fraza 
+                OR (a.imie || ' ' || a.nazwisko) LIKE :fraza )";
+
             $parametry['fraza'] = "%$params[fraza]%";
         }
         if (!empty($params['id_kategorii'])) {
@@ -114,7 +105,7 @@ class Ksiazki
 
         // dodawanie sortowania
         if (!empty($params['sortowanie'])) {
-            $kolumny = ['k.tytul', 'k.cena'];
+            $kolumny = ['k.tytul', 'k.cena', 'a.nazwisko'];
             $kierunki = ['ASC', 'DESC'];
             [$kolumna, $kierunek] = explode(' ', $params['sortowanie']);
 
