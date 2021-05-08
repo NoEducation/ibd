@@ -72,7 +72,7 @@ $iloscRekodow = $stronicowanie->getIloscRekordow();
         <button class="btn btn-sm btn-primary" type="submit">Szukaj</button>
     </form>
 
-    <table class="table table-striped table-condensed">
+    <table class="table table-striped table-condensed" id="ksiazki">
         <thead>
         <tr>
             <th>&nbsp;</th>
@@ -100,8 +100,12 @@ $iloscRekodow = $stronicowanie->getIloscRekordow();
                 <td><?= $ks['nazwa'] ?></td>
                 <td><?= $ks['cena'] ?></td>
                 <td>
-                    <a href="#" title="dodaj do koszyka"><i class="fas fa-cart-plus"></i></a>
-                    <a href="ksiazki.szczegoly.php?id=<?= $ks['id'] ?>" title="szczegóły"><i class="fas fa-folder-open"></i></a>
+                    <a href="koszyk.dodaj.php?id=<?=$ks['id'] ?>" title="dodaj do koszyka" class="aDodajDoKoszyka">
+                        <i class="fas fa-cart-plus"></i>
+                    </a>
+                    <a href="ksiazki.szczegoly.php?id=<?= $ks['id'] ?>" title="szczegóły">
+                        <i class="fas fa-folder-open"></i>
+                    </a>
                 </td>
             </tr>
         <?php endforeach; ?>

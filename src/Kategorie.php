@@ -9,7 +9,7 @@ class Kategorie
      *
      * @var Db
      */
-    private $db;
+    private Db $db;
 
     public function __construct()
     {
