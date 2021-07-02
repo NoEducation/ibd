@@ -25,6 +25,7 @@ class Uzytkownicy
      */
     public function dodaj(array $dane, string $grupa = 'użytkownik'): int
     {
+    $isEqual = password_verify($dane['haslo'], password_hash($dane['haslo'], PASSWORD_DEFAULT));
         return $this->db->dodaj('uzytkownicy', [
             'imie' => $dane['imie'],
             'nazwisko' => $dane['nazwisko'],
@@ -32,7 +33,7 @@ class Uzytkownicy
             'telefon' => $dane['telefon'],
             'email' => $dane['email'],
             'login' => $dane['login'],
-            'haslo' => md5($dane['haslo']),
+            'haslo' =>  password_hash($dane['haslo'], PASSWORD_DEFAULT),
             'grupa' => $grupa
         ]);
     }
@@ -47,12 +48,13 @@ class Uzytkownicy
      */
     public function zaloguj(string $login, string $haslo, string $grupa): bool
     {
-        $haslo = md5($haslo);
         $dane = $this->db->pobierzWszystko(
-            "SELECT * FROM uzytkownicy WHERE login = :login AND haslo = '$haslo' AND grupa = '$grupa'", ['login' => $login]
+            "SELECT * FROM uzytkownicy WHERE login = :login AND grupa = '$grupa'", ['login' => $login]
         );
 
-        if ($dane) {
+        $passwordFromDb = $dane[0]['haslo'];
+
+        if (password_verify($haslo, $passwordFromDb)) {
             $_SESSION['id_uzytkownika'] = $dane[0]['id'];
             $_SESSION['grupa'] = $dane[0]['grupa'];
             $_SESSION['login'] = $dane[0]['login'];
@@ -145,4 +147,13 @@ class Uzytkownicy
 
         return $this->db->aktualizuj('uzytkownicy', $update, $id);
     }
+
+    public function checkIfUserExists(string $login, string $email): bool
+    {
+        // sql injection xd
+        $sql = "SELECT COUNT(1) FROM uzytkownicy WHERE login = '" . $login . "' OR email = '". $email ."'";
+        $result = $this->db->pobierzWszystko($sql);
+        return $result[0]["COUNT(1)"] == 1;
+    }
+
 }
