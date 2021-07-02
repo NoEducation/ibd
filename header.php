@@ -4,13 +4,7 @@ error_reporting(E_ALL | E_STRICT);
 
 if(session_status() != PHP_SESSION_ACTIVE) {
     session_start();
-}
-<<<<<<< .mine
-
-=======
-
->>>>>>> .theirs
-define('ROK_AKADEMICKI', (date('Y') - 1) . '/' . date('Y'));
+}define('ROK_AKADEMICKI', (date('Y') - 1) . '/' . date('Y'));
 
 require_once 'vendor/autoload.php';
 
