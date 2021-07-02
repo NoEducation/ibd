@@ -35,12 +35,7 @@ class Db
     {
         $stmt = $this->pdo->prepare($sql);
 
-        if (!empty($params) && is_array($params)) {
-            foreach ($params as $k => $v)
-                $stmt->bindParam($k, $v);
-        }
-
-        if (!$stmt->execute()) {
+        if (!$stmt->execute($params)) {
             throw new \RuntimeException("Failed to execute [$sql] {$stmt->errorInfo()[2]}");
         }
 
@@ -146,6 +141,20 @@ class Db
         $stmt = $this->pdo->prepare($sql);
 
         $params['id'] = $id;
+        return $stmt->execute($params);
+    }
+
+    /**
+     * Wykonuje podane zapytanie SQL z parametrami.
+     *
+     * @param string $sql
+     * @param array  $params
+     * @return bool
+     */
+    public function wykonaj(string $sql, array $params = []): bool
+    {
+        $stmt = $this->pdo->prepare($sql);
+
         return $stmt->execute($params);
     }
 }

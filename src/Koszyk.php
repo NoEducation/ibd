@@ -78,7 +78,7 @@ class Koszyk
 	 */
 	public function zmienLiczbeSztuk(array $dane): void
 	{
-		foreach($dane as $idKoszyka => $ilosc) {
+		foreach ($dane as $idKoszyka => $ilosc) {
 			if ($ilosc <= 0) {
                 $this->db->usun('koszyk', $idKoszyka);
             } else {
@@ -87,6 +87,16 @@ class Koszyk
 		}
 	}
 
+    /**
+     * Czyści koszyk.
+     *
+     * @param string $idSesji
+     * @return bool
+     */
+    public function wyczysc(string $idSesji): bool
+    {
+        return $this->db->wykonaj("DELETE FROM koszyk WHERE id_sesji = :id_sesji", ['id_sesji' => $idSesji]);
+    }
 	public function pobierzKsiazkeWKoszyku(int $id, string $idSesji): ?array{
         $sql = "SELECT k.id, k.liczba_sztuk FROM koszyk AS K WHERE k.id_sesji = '$idSesji'";
         $result = $this->db->pobierz($sql, $id, "k.id_ksiazki");

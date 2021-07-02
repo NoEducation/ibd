@@ -1,6 +1,6 @@
 <?php
-ini_set('display_errors',1);
-error_reporting(E_ALL|E_STRICT);
+ini_set('display_errors', 1);
+error_reporting(E_ALL | E_STRICT);
 session_start();
 require_once 'vendor/autoload.php';
 
@@ -18,6 +18,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_GET['id'])) {
     } else {
 			if ($koszyk->dodaj($_GET['id'], session_id())) {
 				echo 'ok';
-			}
-    }
+			}    }
 }
