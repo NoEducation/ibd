@@ -3,7 +3,9 @@
   "description": "Projekt Internetowe Bazy Danych",
   "require": {
     "php": "^7.4",
-    "ext-pdo": "*"
+    "ext-pdo": "*",
+    "ext-gd": "*",
+    "vlucas/valitron": "^1.4"
   },
   "autoload": {
     "psr-4": {
