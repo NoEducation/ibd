@@ -1,10 +1,13 @@
 <?php
 require_once 'vendor/autoload.php';
-session_start();
 
 use Ibd\Koszyk;
 
 $koszyk = new Koszyk();
+
+if(!isset($_SESSION['IS_LOGEDIN']) == 'Y'){
+    session_start();
+}
 
 if(isset($_POST['zmien'])) {
 	$koszyk->zmienLiczbeSztuk($_POST['ilosci']);
@@ -12,14 +15,27 @@ if(isset($_POST['zmien'])) {
 }
 
 $listaKsiazek = $koszyk->pobierzWszystkie();
+$iloscSztuk = 0;
+$calkowtaCena = 0;
+
+foreach($listaKsiazek as $ks){
+    $iloscSztuk += $ks['liczba_sztuk'];
+    $calkowtaCena += $ks['cena'] * $ks['liczba_sztuk'];
+}
 
 include 'header.php';
 ?>
 
-<h2>Koszyk</h2>
-
+<div class="d-flex flex-row justify-content-between p-3 " >
+    <h2>Koszyk</h2>
+    <div class="d-flex flex-column border rounded p-3">
+        <h5>Podsumowanie</h5>
+        <span>Ilosć książek: <b class="text-success"> <?= $iloscSztuk?></b></span>
+        <span >Całkowita cena: <b class="text-success"> <?= $calkowtaCena?> zł</b></span>
+    </div>
+</div>
 <form method="post" action="">
-	<table class="table table-striped table-condensed">
+	<table class="table table-striped table-condensed" id="koszyk">
 		<thead>
 			<tr>
 				<th>&nbsp;</th>
@@ -55,7 +71,7 @@ include 'header.php';
 						</td>
 						<td><?= $ks['cena'] * $ks['liczba_sztuk'] ?></td>
 						<td style="white-space: nowrap">
-							<a href="koszyk.usun.php" title="usuń z koszyka">
+							<a href="koszyk.usun.php" title="usuń z koszyka"  class="aUsunZKoszyka">
                                 <i class="fas fa-trash"></i>
 							</a>
 							<a href="ksiazki.szczegoly.php?id=<?=$ks['id']?>" title="szczegóły">

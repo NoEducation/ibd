@@ -1,6 +1,5 @@
     <?php
 include 'header.php';
-
 use Ibd\Ksiazki;
 use Ibd\Kategorie;
 use Ibd\Stronicowanie;

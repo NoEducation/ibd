@@ -3,7 +3,7 @@ use Ibd\Ksiazki;
 $ksiazki = new Ksiazki();
 $dane = $ksiazki->pobierzBestsellery();
 ?>
-<div class="col-md-2">
+<div class="col-md-3">
     <div class="card">
         <div class="card-header">
             Bestsellery

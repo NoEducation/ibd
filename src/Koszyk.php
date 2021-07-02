@@ -22,6 +22,7 @@ class Koszyk
 	 */
 	public function pobierzWszystkie(): array
     {
+        $sessionId = session_id();
 		$sql = "
 			SELECT ks.*, ko.liczba_sztuk, ko.id AS id_koszyka
 			FROM ksiazki ks JOIN koszyk ko ON ks.id = ko.id_ksiazki
@@ -30,6 +31,13 @@ class Koszyk
 
 		return $this->db->pobierzWszystko($sql);
 	}
+
+	public function policzIloscElemetow(): int {
+	    $sessionId = session_id();
+	    $sql = "SELECT COUNT(1) FROM `koszyk` AS ko WHERE ko.id_sesji = '" . session_id() . "';";
+        $result =  $this->db->pobierzWszystko($sql);
+        return $result[0]["COUNT(1)"];
+    }
 
 	/**
 	 * Dodaje książkę do koszyka.
@@ -78,5 +86,21 @@ class Koszyk
             }
 		}
 	}
+
+	public function pobierzKsiazkeWKoszyku(int $id, string $idSesji): ?array{
+        $sql = "SELECT k.id, k.liczba_sztuk FROM koszyk AS K WHERE k.id_sesji = '$idSesji'";
+        $result = $this->db->pobierz($sql, $id, "k.id_ksiazki");
+
+        return  $result;
+    }
+
+    public function zaktualizuj(int $liczba_sztuk, int $id): int
+    {
+        $dane = [
+            'liczba_sztuk' =>$liczba_sztuk + 1
+        ];
+
+        return $this->db->aktualizuj('koszyk', $dane, $id);
+    }
 
 }

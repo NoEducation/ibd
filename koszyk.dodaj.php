@@ -10,10 +10,12 @@ $koszyk = new Koszyk();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_GET['id'])) {
     if ($koszyk->czyIstnieje($_GET['id'], session_id())) {
-			// ksiazka już istnieje w koszyku, zwiększ ilość
-			// TODO: dodać odpowiednią funkcjonalność
+
+        $rekord = $koszyk->pobierzKsiazkeWKoszyku($_GET['id'], session_id());
+        $koszyk->zaktualizuj($rekord["liczba_sztuk"], $rekord["id"]);
+
+        echo 'ok';
     } else {
-			// książki nie ma w koszyku, dodaj do koszyka
 			if ($koszyk->dodaj($_GET['id'], session_id())) {
 				echo 'ok';
 			}
