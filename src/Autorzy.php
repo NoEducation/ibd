@@ -18,9 +18,50 @@ class Autorzy
      */
 	public function pobierzSelect(): string
     {
-        return "SELECT * FROM autorzy WHERE 1=1 ";
+        return "SELECT *, (SELECT COUNT(1) FROM ksiazki kk where kk.id_autora = a.id) `ilosc` FROM autorzy a WHERE 1=1 ";
 	}
 
+    public function pobierzZapytanie(array $params = []): array
+    {
+        $parametry = [];
+        $sql = $this->pobierzSelect();
+
+        // dodawanie warunków do zapytanie
+        if (!empty($params['nazwisko'])) {
+            $sql .= " AND (a.nazwisko LIKE :nazwisko)";
+
+            $parametry['nazwisko'] = "%$params[nazwisko]%";
+        }
+        if (!empty($params['imie'])) {
+            $sql .= " AND a.imie LIKE :imie ";
+            $parametry['imie'] = "%$params[imie]%";
+        }
+
+        // dodawanie sortowania
+        if (!empty($params['sortowanie'])) {
+            $kolumny = ['a.imie', 'a.nazwisko'];
+            $kierunki = ['ASC', 'DESC'];
+            [$kolumna, $kierunek] = explode(' ', $params['sortowanie']);
+
+            if (in_array($kolumna, $kolumny) && in_array($kierunek, $kierunki)) {
+                $sql .= " ORDER BY " . $params['sortowanie'];
+            }
+        }
+
+        return ['sql' => $sql, 'parametry' => $parametry];
+    }
+
+    /**
+     * Pobiera stronę z danymi książek.
+     *
+     * @param string $select
+     * @param array  $params
+     * @return array
+     */
+    public function pobierzStrone(string $select, array $params = []): array
+    {
+        return $this->db->pobierzWszystko($select, $params);
+    }
 	/**
 	 * Wykonuje podane w parametrze zapytanie SELECT.
 	 * 
@@ -65,6 +106,12 @@ class Autorzy
 	 */
 	public function usun(int $id): bool
     {
+        $sql = "SELECT COUNT(1) FROM ksiazki k where k.id_autora = " . $id;
+        $result = $this->pobierzWszystko($sql);
+
+        if($result[0]["COUNT(1)"] != '0')
+            return false;
+
 		return $this->db->usun('autorzy', $id);
 	}
 

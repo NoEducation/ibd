@@ -52,6 +52,9 @@ document.body.onload = () => {
 
     // książki
     document.querySelectorAll('.aUsunKsiazke').forEach(a => a.addEventListener('click', usunRekord))
+
+    // kategorie
+    document.querySelectorAll('.aUsunKategorie').forEach(a => a.addEventListener('click', usunRekord))
 }
 
 /**
@@ -59,6 +62,7 @@ document.body.onload = () => {
  *
  */
 async function usunRekord(e) {
+    debugger;
     e.preventDefault()
 
     if (confirm('Czy na pewno chcesz usunąć rekord?')) {
