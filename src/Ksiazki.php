@@ -68,15 +68,30 @@ class Ksiazki
 	 */
 	public function pobierzBestsellery(): ?array
 	{
-		$sql = "SELECT 
-                k.id ,
+		$sql = "SELECT
+                k.id,
                 k.tytul,
                 k.zdjecie,
                 a.imie,
                 a.nazwisko
-                FROM ksiazki k 
-                INNER JOIN autorzy a on k.id_autora = a.id
-                ORDER BY RAND() LIMIT 5";
+            FROM
+                ksiazki k
+            INNER JOIN autorzy a ON
+                k.id_autora = a.id
+            LEFT JOIN(
+                SELECT id_ksiazki,
+                    SUM(liczba_sztuk) liczba_sztuk
+                FROM
+                    zamowienia_szczegoly
+                GROUP BY
+                    id_ksiazki
+            ) CTE
+            ON
+                CTE.id_ksiazki = K.id
+            ORDER BY
+                CTE.liczba_sztuk
+            DESC
+            LIMIT 5";
 
         $result = $this->db->pobierzWszystko($sql);
         return $result;

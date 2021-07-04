@@ -79,11 +79,12 @@ class Autorzy
 	 * @param int $id
 	 * @return array
 	 */
-	public function pobierz(int $id): array
+    public function pobierz(int $id): array
     {
-		return $this->db->pobierz('autorzy', $id);
-	}
+        $result = $this->db->pobierzWszystko("select * from autorzy where id =". $id);
 
+        return $result[0];
+    }
 	/**
 	 * Dodaje autora.
 	 *

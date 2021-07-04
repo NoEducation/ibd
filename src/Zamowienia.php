@@ -30,6 +30,18 @@ class Zamowienia
         ]);
     }
 
+    public function getSelect(string $whereClause = " "): string{
+        return "SELECT z.*, u.login, s.nazwa AS status,
+			ROUND(SUM(sz.cena*sz.liczba_sztuk), 2) AS suma,
+			COUNT(sz.id) AS liczba_produktow,
+			SUM(sz.liczba_sztuk) AS liczba_sztuk
+			FROM zamowienia z JOIN uzytkownicy u ON z.id_uzytkownika = u.id
+			JOIN zamowienia_statusy s ON z.id_statusu = s.id
+			JOIN zamowienia_szczegoly sz ON z.id = sz.id_zamowienia"
+            . $whereClause .
+            "GROUP BY z.id";
+    }
+
     /**
      * Dodaje szczegóły zamówienia.
      * 
@@ -55,17 +67,26 @@ class Zamowienia
      */
     public function pobierzWszystkie(): array
     {
-        $sql = "
-			SELECT z.*, u.login, s.nazwa AS status,
-			ROUND(SUM(sz.cena*sz.liczba_sztuk), 2) AS suma,
-			COUNT(sz.id) AS liczba_produktow,
-			SUM(sz.liczba_sztuk) AS liczba_sztuk
-			FROM zamowienia z JOIN uzytkownicy u ON z.id_uzytkownika = u.id
-			JOIN zamowienia_statusy s ON z.id_statusu = s.id
-			JOIN zamowienia_szczegoly sz ON z.id = sz.id_zamowienia
-			GROUP BY z.id
-	    ";
+        $sql = $this->getSelect();
 
         return $this->db->pobierzWszystko($sql);
+    }
+
+    public function getById(int $id){
+        $whereClause = " WHERE Z.id = " . $id . " ";
+        $sql = $this->getSelect($whereClause);
+        $result = $this->db->pobierzWszystko($sql);
+
+        return $result[0];
+    }
+
+    public function getStatuses(){
+        $sql = "SELECT * FROM `zamowienia_statusy`";
+        return $this->db->pobierzWszystko($sql);
+    }
+
+    public function changeStatus(array $dane, int $id){
+        $result = $this->db->wykonaj("UPDATE zamowienia SET id_statusu = :id_status WHERE id = :id;", ['id_status' => $dane['status'], 'id' => $id]);
+        return $result;
     }
 }
